@@ -1,0 +1,14 @@
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node (if any tooling is added later)
+node_modules/
+npm-debug.log*
+
+# Vercel local
+.vercel/

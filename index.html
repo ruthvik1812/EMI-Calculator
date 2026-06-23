@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <!-- ============================================================
+       EMI Calculator — index.html  (Feature-Rich Edition)
+       Author  : Ruthvik Raj Chintala
+       Features: Dark mode · Presets · Amortization · Comparison
+                 Copy results · CSV Export · Savings Tip
+       ============================================================ -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EMI Calculator | Ruthvik Raj Chintala</title>
+  <meta name="description" content="Free online EMI Calculator – Instantly calculate Monthly EMI, Total Interest, Amortization Schedule, and compare loan scenarios." />
+  <meta name="keywords" content="EMI calculator, loan calculator, monthly EMI, interest calculator, amortization schedule, loan comparison" />
+  <meta name="author" content="Ruthvik Raj Chintala" />
+  <meta property="og:title"       content="EMI Calculator" />
+  <meta property="og:description" content="Calculate your loan EMI instantly!" />
+  <meta property="og:type"        content="website" />
+
+  <!-- Custom hexagon ₹ favicon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpolygon points='32,2 58,17 58,47 32,62 6,47 6,17' fill='%237c2d8f'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-weight='900' font-size='28' fill='white'%3E%E2%82%B9%3C/text%3E%3C/svg%3E" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+<div class="page">
+
+  <!-- ═══════════════════════════════════════════
+       NAV BAR
+  ═══════════════════════════════════════════ -->
+  <nav class="navbar" role="navigation" aria-label="Site navigation">
+    <!-- SVG Hexagon-Badge Logo -->
+    <div class="nav-logo">
+      <svg class="logo-badge" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <polygon points="32,3 57,17.5 57,46.5 32,61 7,46.5 7,17.5" fill="url(#logoGrad)" />
+        <polygon points="32,9 51,20 51,44 32,55 13,44 13,20" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>
+        <text x="32" y="38" text-anchor="middle" dominant-baseline="middle"
+          font-family="Arial, sans-serif" font-weight="900" font-size="24" fill="white">₹</text>
+        <defs>
+          <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#7c2d8f"/>
+            <stop offset="55%"  stop-color="#d0227c"/>
+            <stop offset="100%" stop-color="#e8920a"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="nav-logo-text">
+        EMI<span class="logo-accent">Calc</span>
+        <span class="logo-sub">Smart Finance</span>
+      </span>
+    </div>
+
+    <!-- Nav right-side controls -->
+    <div class="nav-controls">
+      <!-- 🌙 Dark mode toggle -->
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle Dark Mode">
+        <span id="themeIcon">🌙</span>
+      </button>
+      <!-- Digital Heroes button -->
+      <button id="digitalHeroesBtn" class="nav-btn" aria-label="Open Digital Heroes website" title="Built for Digital Heroes">
+        🚀 Built for Digital Heroes
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════ -->
+  <header class="hero" role="banner">
+    <div class="hero-tag" aria-hidden="true">
+      <span class="tag-dot"></span> Smart Finance Tool
+    </div>
+    <h1 class="hero-heading">
+      EMI&nbsp;<span class="highlight">Calculator</span>
+    </h1>
+    <p class="hero-sub">
+      Plan your loan repayments with precision. Get instant EMI, amortization schedule, and smart loan comparisons.
+    </p>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       STATS RIBBON
+  ═══════════════════════════════════════════ -->
+  <section class="stats-ribbon" aria-label="Loan summary stats">
+    <div class="stat-chip">
+      <div class="stat-chip-icon">📅</div>
+      <div class="stat-chip-val" id="pillMonths">—</div>
+      <div class="stat-chip-lbl">Total Months</div>
+    </div>
+    <div class="stat-chip">
+      <div class="stat-chip-icon">📈</div>
+      <div class="stat-chip-val" id="pillRate">—</div>
+      <div class="stat-chip-lbl">Annual Rate</div>
+    </div>
+    <div class="stat-chip">
+      <div class="stat-chip-icon">⏳</div>
+      <div class="stat-chip-val" id="pillYears">—</div>
+      <div class="stat-chip-lbl">Loan Tenure</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       BENTO GRID
+  ═══════════════════════════════════════════ -->
+  <main class="bento" role="main">
+
+    <!-- ─── INPUTS CARD ─── -->
+    <section class="card bento-inputs" aria-labelledby="inputs-title">
+      <div class="card-head">
+        <div>
+          <div class="card-title" id="inputs-title">Loan Details</div>
+          <div class="card-subtitle">Enter your loan parameters</div>
+        </div>
+        <span class="card-badge badge-purple">⚡ Instant</span>
+      </div>
+
+      <!-- ⚡ FEATURE 1: Loan Type Quick Presets -->
+      <div class="preset-section">
+        <div class="preset-label">Quick Presets</div>
+        <div class="preset-row">
+          <button class="preset-btn" data-loan="3000000" data-rate="8.6" data-tenure="20" id="preset-home">
+            🏠<span>Home</span>
+          </button>
+          <button class="preset-btn" data-loan="700000" data-rate="9.5" data-tenure="7" id="preset-car">
+            🚗<span>Car</span>
+          </button>
+          <button class="preset-btn" data-loan="300000" data-rate="14" data-tenure="3" id="preset-personal">
+            💼<span>Personal</span>
+          </button>
+          <button class="preset-btn" data-loan="1200000" data-rate="7.5" data-tenure="10" id="preset-edu">
+            🎓<span>Education</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loan Amount -->
+      <div class="form-group" id="group-loan">
+        <div class="form-label">
+          <span>💵 Loan Amount</span>
+          <span class="label-val" id="lbl-loan">₹ 0</span>
+        </div>
+        <div class="input-row" id="row-loan">
+          <span class="input-prefix-box">₹</span>
+          <input type="number" id="loanAmount" class="form-input" placeholder="e.g. 500000"
+            min="1" step="1000" aria-label="Loan Amount in Rupees" autocomplete="off" />
+        </div>
+        <p class="err-msg" id="errLoan" role="alert"></p>
+        <div class="slider-track">
+          <input type="range" id="loanSlider" class="form-slider"
+            min="10000" max="10000000" step="10000" value="500000" aria-label="Loan Amount Slider" />
+          <div class="slider-minmax"><span>₹10K</span><span>₹1 Cr</span></div>
+        </div>
+      </div>
+
+      <!-- Annual Interest Rate -->
+      <div class="form-group" id="group-rate">
+        <div class="form-label">
+          <span>📊 Annual Interest Rate</span>
+          <span class="label-val" id="lbl-rate">0 %</span>
+        </div>
+        <div class="input-row" id="row-rate">
+          <span class="input-prefix-box">%</span>
+          <input type="number" id="interestRate" class="form-input" placeholder="e.g. 8.5"
+            min="0.1" max="50" step="0.1" aria-label="Annual Interest Rate" autocomplete="off" />
+        </div>
+        <p class="err-msg" id="errRate" role="alert"></p>
+        <div class="slider-track">
+          <input type="range" id="rateSlider" class="form-slider"
+            min="1" max="30" step="0.1" value="8.5" aria-label="Interest Rate Slider" />
+          <div class="slider-minmax"><span>1%</span><span>30%</span></div>
+        </div>
+      </div>
+
+      <!-- Loan Tenure -->
+      <div class="form-group" id="group-tenure">
+        <div class="form-label">
+          <span>📅 Loan Tenure</span>
+          <span class="label-val" id="lbl-tenure">0 Yrs</span>
+        </div>
+        <div class="input-row" id="row-tenure">
+          <span class="input-prefix-box">Yr</span>
+          <input type="number" id="tenure" class="form-input" placeholder="e.g. 5"
+            min="1" max="30" step="1" aria-label="Loan Tenure in Years" autocomplete="off" />
+        </div>
+        <p class="err-msg" id="errTenure" role="alert"></p>
+        <div class="slider-track">
+          <input type="range" id="tenureSlider" class="form-slider"
+            min="1" max="30" step="1" value="5" aria-label="Tenure Slider" />
+          <div class="slider-minmax"><span>1 yr</span><span>30 yrs</span></div>
+        </div>
+      </div>
+
+      <!-- Calculate Button -->
+      <button id="calculateBtn" class="btn-calc" aria-label="Calculate EMI">
+        Calculate EMI
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </button>
+    </section>
+
+    <!-- ─── RESULTS CARD ─── -->
+    <section class="card bento-results" aria-labelledby="results-title">
+      <div class="card-head">
+        <div>
+          <div class="card-title" id="results-title">Your Results</div>
+          <div class="card-subtitle">Calculated breakdown</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <!-- ⚡ FEATURE 2: Copy Results button -->
+          <button id="copyBtn" class="btn-icon-action" title="Copy Results" aria-label="Copy results" style="display:none;">
+            📋
+          </button>
+          <span class="card-badge badge-green">✓ Live</span>
+        </div>
+      </div>
+
+      <!-- Placeholder -->
+      <div class="result-placeholder" id="resultsPlaceholder">
+        <div class="ph-icon" aria-hidden="true">🧮</div>
+        <p>Fill in your loan details and hit <strong>Calculate EMI</strong> to see your instant breakdown here.</p>
+      </div>
+
+      <!-- Results list -->
+      <div class="results-list" id="resultsList" role="region" aria-live="polite">
+        <div class="result-tile emi">
+          <div class="tile-icon" aria-hidden="true">💳</div>
+          <div>
+            <div class="tile-label">Monthly EMI</div>
+            <div class="tile-sub">Per month instalment</div>
+          </div>
+          <div class="tile-amount" id="resultEMI">₹0</div>
+        </div>
+        <div class="result-tile interest">
+          <div class="tile-icon" aria-hidden="true">📉</div>
+          <div>
+            <div class="tile-label">Total Interest</div>
+            <div class="tile-sub">Interest payable</div>
+          </div>
+          <div class="tile-amount" id="resultInterest">₹0</div>
+        </div>
+        <div class="result-tile total">
+          <div class="tile-icon" aria-hidden="true">🏦</div>
+          <div>
+            <div class="tile-label">Total Payment</div>
+            <div class="tile-sub">Principal + Interest</div>
+          </div>
+          <div class="tile-amount" id="resultTotal">₹0</div>
+        </div>
+
+        <!-- ⚡ FEATURE 3: Savings Tip -->
+        <div class="savings-tip" id="savingsTip" style="display:none;">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text" id="tipText"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── CHART CARD ─── -->
+    <section class="card bento-chart" aria-labelledby="chart-title">
+      <div class="card-head">
+        <div>
+          <div class="card-title" id="chart-title">Loan Split</div>
+          <div class="card-subtitle">Principal vs Interest</div>
+        </div>
+      </div>
+      <div class="chart-inner">
+        <!-- SVG Progress Ring -->
+        <div class="ring-wrap" aria-hidden="true">
+          <svg viewBox="0 0 130 130" fill="none">
+            <defs>
+              <linearGradient id="ringPrincipalGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%"   stop-color="#7c2d8f"/>
+                <stop offset="100%" stop-color="#d0227c"/>
+              </linearGradient>
+              <linearGradient id="ringInterestGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%"   stop-color="#e8345a"/>
+                <stop offset="100%" stop-color="#e8920a"/>
+              </linearGradient>
+            </defs>
+            <circle cx="65" cy="65" r="52" stroke="#f0e6d8" stroke-width="14" />
+            <circle id="ringInterest" cx="65" cy="65" r="52"
+              stroke="url(#ringInterestGrad)" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="0 327" stroke-dashoffset="0" fill="none" />
+            <circle id="ringPrincipal" cx="65" cy="65" r="52"
+              stroke="url(#ringPrincipalGrad)" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="0 327" stroke-dashoffset="0" fill="none" />
+          </svg>
+          <div class="ring-center">
+            <span class="ring-center-pct" id="ringCenterPct">—</span>
+            <span class="ring-center-lbl">Principal</span>
+          </div>
+        </div>
+        <!-- Legend -->
+        <div class="ring-legend">
+          <div class="legend-row">
+            <span class="legend-swatch" style="background:linear-gradient(135deg,#7c2d8f,#d0227c);"></span>
+            <span class="legend-name">Principal</span>
+            <span class="legend-pct" id="legendPrincipal">—</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-swatch" style="background:linear-gradient(135deg,#e8345a,#e8920a);"></span>
+            <span class="legend-name">Interest</span>
+            <span class="legend-pct" id="legendInterest">—</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-swatch" style="background:linear-gradient(135deg,#0dac6f,#e8920a);"></span>
+            <span class="legend-name">Total Paid</span>
+            <span class="legend-pct" id="legendTotal">—</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- /bento -->
+
+  <!-- ═══════════════════════════════════════════
+       ⚡ FEATURE 4: AMORTIZATION SCHEDULE
+  ═══════════════════════════════════════════ -->
+  <section class="extra-section" id="amortSection" style="display:none;" aria-labelledby="amort-title">
+    <div class="extra-section-head">
+      <div>
+        <h2 class="section-title" id="amort-title">📊 Amortization Schedule</h2>
+        <p class="section-sub">Complete month-by-month repayment breakdown</p>
+      </div>
+      <div class="section-actions">
+        <!-- ⚡ FEATURE 5: CSV Export -->
+        <button id="downloadCSV" class="btn-action" aria-label="Download CSV">⬇ CSV</button>
+        <button id="printAmort"  class="btn-action btn-action-outline" aria-label="Print">🖨 Print</button>
+      </div>
+    </div>
+
+    <!-- Amortization Summary Pills -->
+    <div class="amort-summary">
+      <div class="amort-pill amort-pill-violet">
+        <span class="amort-pill-label">Total Principal</span>
+        <span class="amort-pill-val" id="aSumPrincipal">₹0</span>
+      </div>
+      <div class="amort-pill amort-pill-rose">
+        <span class="amort-pill-label">Total Interest</span>
+        <span class="amort-pill-val" id="aSumInterest">₹0</span>
+      </div>
+      <div class="amort-pill amort-pill-emerald">
+        <span class="amort-pill-label">Grand Total</span>
+        <span class="amort-pill-val" id="aSumTotal">₹0</span>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-scroll">
+      <table class="amort-table" id="amortTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Month &amp; Year</th>
+            <th>Opening Balance</th>
+            <th>EMI</th>
+            <th>Principal Paid</th>
+            <th>Interest Paid</th>
+            <th>Closing Balance</th>
+          </tr>
+        </thead>
+        <tbody id="amortBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="amort-pager">
+      <button id="prevPage" class="pager-btn" disabled>← Prev</button>
+      <span id="pageInfo" class="page-info">Page 1 of 1</span>
+      <button id="nextPage" class="pager-btn">Next →</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       ⚡ FEATURE 6: LOAN COMPARISON TOOL
+  ═══════════════════════════════════════════ -->
+  <section class="extra-section" id="compareSection" style="display:none;" aria-labelledby="compare-title">
+    <div class="extra-section-head">
+      <div>
+        <h2 class="section-title" id="compare-title">🔄 Loan Comparison</h2>
+        <p class="section-sub">Compare your current loan against an alternative scenario</p>
+      </div>
+    </div>
+
+    <!-- Comparison inputs -->
+    <div class="compare-inputs-row">
+      <div class="compare-input-group">
+        <label class="compare-label" for="cmpRate">Alt. Interest Rate (%)</label>
+        <input type="number" id="cmpRate" class="compare-input" step="0.1" min="0.1" max="50"
+          placeholder="e.g. 10.5" aria-label="Alternative interest rate" />
+      </div>
+      <div class="compare-input-group">
+        <label class="compare-label" for="cmpTenure">Alt. Tenure (Years)</label>
+        <input type="number" id="cmpTenure" class="compare-input" step="1" min="1" max="30"
+          placeholder="e.g. 7" aria-label="Alternative tenure in years" />
+      </div>
+      <button id="compareBtn" class="btn-compare" aria-label="Compare loans">
+        Compare Now →
+      </button>
+    </div>
+
+    <!-- Comparison results -->
+    <div class="compare-cards" id="compareCards"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       ⚡ FEATURE 7: PREPAYMENT SAVINGS CALCULATOR
+  ═══════════════════════════════════════════ -->
+  <section class="extra-section" id="prepaySection" style="display:none;" aria-labelledby="prepay-title">
+    <div class="extra-section-head">
+      <div>
+        <h2 class="section-title" id="prepay-title">💰 Prepayment Savings</h2>
+        <p class="section-sub">See how a lump-sum payment reduces your interest burden</p>
+      </div>
+    </div>
+    <div class="compare-inputs-row">
+      <div class="compare-input-group">
+        <label class="compare-label" for="prepayAmt">Prepayment Amount (₹)</label>
+        <input type="number" id="prepayAmt" class="compare-input" step="1000" min="1"
+          placeholder="e.g. 100000" aria-label="Prepayment amount" />
+      </div>
+      <div class="compare-input-group">
+        <label class="compare-label" for="prepayMonth">After Month #</label>
+        <input type="number" id="prepayMonth" class="compare-input" step="1" min="1"
+          placeholder="e.g. 12" aria-label="Month of prepayment" />
+      </div>
+      <button id="prepayBtn" class="btn-compare btn-compare-amber" aria-label="Calculate prepayment savings">
+        Calculate Savings →
+      </button>
+    </div>
+    <div id="prepayResult" class="prepay-result" style="display:none;"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
+  <footer role="contentinfo">
+    <div class="footer-card">
+      <p class="footer-name">Ruthvik Raj Chintala</p>
+      <a class="footer-email" href="mailto:ruthvikraj.chintala1812@gmail.com"
+        aria-label="Email Ruthvik Raj Chintala">
+        ruthvikraj.chintala1812@gmail.com
+      </a>
+    </div>
+    <p class="footer-copy">
+      © <span id="footerYear"></span> EMI Calculator · Built with ❤️ for Digital Heroes
+    </p>
+  </footer>
+
+</div><!-- /page -->
+
+<!-- Toast notification -->
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
